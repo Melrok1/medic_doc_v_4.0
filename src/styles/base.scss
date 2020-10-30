@@ -1,6 +1,19 @@
+$Primary_color: purple;
+$path--rel: "../src/assets";
+
+
 *, *::after, *::before {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+body {
+  min-height: 100vh;
+  padding: 1rem;
+  background-color: #fdfdfd;
+  background-image: url("#{$path--rel}/mainBackground.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
