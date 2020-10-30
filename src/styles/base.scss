@@ -1,19 +1,24 @@
-$Primary_color: purple;
-$path--rel: "../src/assets";
+// VARIABLES
 
+$Primary_color: purple;
+$path--rel: "../public/img";
+
+
+//MIXINS
+
+@mixin displayFlex($direction, $justify, $align) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $justify;
+  align-items: $align;
+}
+
+
+
+//GENERAL CSS
 
 *, *::after, *::before {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-}
-
-body {
-  min-height: 100vh;
-  padding: 1rem;
-  background-color: #fdfdfd;
-  background-image: url("#{$path--rel}/mainBackground.jpg");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
 }

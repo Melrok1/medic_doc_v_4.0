@@ -59,17 +59,17 @@ export default {
 <style lang="scss" scoped>
 
 .home {
-  
+  @include displayFlex(column, center, center);
+  min-height: 100vh;
+
+
   form {
+    @include displayFlex(column, center, center);
     width: 350px;
-    margin: 0 auto;
     padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
     border: 3px solid $Primary_color;
     background: linear-gradient(to bottom, #cecece, #fff);
+    transform: translateY(-50%);
 
     input {
       margin-top: 1rem;
@@ -88,6 +88,12 @@ export default {
       letter-spacing: 1px;
       background: $Primary_color;
       color: #fff;
+    }
+
+    ::placeholder{
+      color: $Primary_color;
+      opacity: 0.5;
+      // color: red;
     }
 
     h3 {

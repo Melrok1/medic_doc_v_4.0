@@ -1,11 +1,22 @@
 <template>
-  <div id="app">
+  <div class="app">
     <router-view/>
   </div>
 </template>
 
 <style lang="scss">
-#app {
+
+body {
+  min-height: 100vh;
+  background-color: #fdfdfd;
+  background-image: url("#{$path--rel}/mainBackground_comprim.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+
+.app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -14,7 +25,6 @@
 }
 
 #nav {
-  padding: 30px;
 
   a {
     font-weight: bold;
