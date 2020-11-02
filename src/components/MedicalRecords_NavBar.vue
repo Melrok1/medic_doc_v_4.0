@@ -1,6 +1,5 @@
 <template>
   <nav>
-    <a href="#">Pridať záznam</a>
     <a href="#" v-if="state.user" @click="showUserProfile">{{ state.user.email }}</a>
     <a href="#" @click="logout">Odhlásiť</a>
   </nav>
