@@ -1,6 +1,7 @@
 // VARIABLES
 
 $Primary_color: purple;
+$Form_gradient: linear-gradient(to bottom, #cecece, #fff);
 $path--rel: "../public/img";
 
 
@@ -11,6 +12,19 @@ $path--rel: "../public/img";
   flex-direction: $direction;
   justify-content: $justify;
   align-items: $align;
+}
+
+@mixin formButton1 {
+  margin-top: 2rem;
+  border: none;
+  outline: none;
+  padding: 0.25rem 0.5rem;
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  background: $Primary_color;
+  color: #fff;
+  cursor: pointer;
 }
 
 
@@ -24,12 +38,12 @@ $path--rel: "../public/img";
 }
 
 
-form {
+form.baseForm {
   @include displayFlex(column, center, center);
   width: 350px;
   padding: 1rem;
   border: 3px solid $Primary_color;
-  background: linear-gradient(to bottom, #cecece, #fff);
+  background: $Form_gradient;
   transform: translateY(-50%);
 
   input {
@@ -40,15 +54,7 @@ form {
   }
 
   button {
-    margin-top: 2rem;
-    border: none;
-    outline: none;
-    padding: 0.25rem 0.5rem;
-    font-size: 1.2rem;
-    font-weight: 800;
-    letter-spacing: 1px;
-    background: $Primary_color;
-    color: #fff;
+    @include formButton1
   }
 
   ::placeholder{
@@ -74,4 +80,8 @@ form {
     color: $Primary_color;
     cursor: pointer;
   }
+}
+
+[v-cloak] {
+  display: none;
 }

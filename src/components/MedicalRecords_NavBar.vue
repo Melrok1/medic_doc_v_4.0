@@ -1,7 +1,7 @@
 <template>
   <nav>
     <a href="#">Pridať záznam</a>
-    <a href="#" v-if="state.user">{{ state.user.email }}</a>
+    <a href="#" v-if="state.user" @click="showUserProfile">{{ state.user.email }}</a>
     <a href="#" @click="logout">Odhlásiť</a>
   </nav>
 
@@ -26,6 +26,7 @@ export default {
     const state = reactive({
       user: null,
       toggle: false,
+      showUserProfileLocalVar: false
     })
 
     function logout() {
@@ -37,6 +38,12 @@ export default {
           store2.dispatch('setUser', {})
         },
       )
+    }
+
+    function showUserProfile() {
+      state.showUserProfileLocalVar = !state.showUserProfileLocalVar;
+      console.log(state.showUserProfileLocalVar);
+      store2.dispatch('showProfile', state.showUserProfileLocalVar);
     }
 
     onMounted(() => {
@@ -52,7 +59,8 @@ export default {
     return {
       state,
       logout,
-      store2
+      store2,
+      showUserProfile
     }
   }
 }

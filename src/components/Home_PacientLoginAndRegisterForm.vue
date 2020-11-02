@@ -1,7 +1,6 @@
 <template>
   <!-- Pecient Login -->
-  <form class="loginForm" v-if="state.active_form" @submit.prevent="loginUser">
-    <p>{{ storeUser.email }}</p>
+  <form class="loginForm baseForm" v-cloak v-if="state.active_form && !storeUser.email" @submit.prevent="loginUser">
     <h3>Login</h3>
     <input type="email" name="inputEmail" v-model="state.login_register_email" placeholder="E-mail" required>
     <input type="password" name="inputPassword" v-model="state.login_register_password" placeholder="Password" required>
@@ -11,7 +10,7 @@
   </form>
 
   <!-- Pecient Register -->
-  <form class="registerForm" v-if="!state.active_form" @submit.prevent="registerUser">
+  <form class="registerForm baseForm" v-cloak v-if="!state.active_form" @submit.prevent="registerUser">
     <h3>Register</h3>
     <input type="text" name="inputName" v-model="state.login_register_name" placeholder="Name" required>
     <input type="email" name="inputEmail" v-model="state.login_register_email" placeholder="E-mail" required>
@@ -27,6 +26,15 @@
     <p class="err_msg">{{ state.err_msg }}</p>
     <button type="submit">Registrovať</button>
     <p>Späť na <span @click="state.active_form = true">prihlásenie</span></p>
+  </form>
+
+  <!-- Pacient after login -->
+  <form class="baseForm" v-cloak @submit.prevent v-if="storeUser.displayName">
+    <p> Je prihlásený účet <strong> {{ storeUser.email }} </strong> </p>
+    <div class="btnWrap">
+      <button @click="enter">Vstúpiť</button>
+      <button @click="logout">Odhlásiť</button>
+    </div>
   </form>
 
 </template>
@@ -85,15 +93,15 @@ export default {
     function registerUser() {
       if(state.login_register_ConfirmPassword) {
         auth.createUserWithEmailAndPassword(state.login_register_email, state.login_register_password).then(
-          () => {
+          async () => {
             const user = auth.currentUser;
             if(user) {
-              user.updateProfile({
+              await user.updateProfile({
                 displayName: state.login_register_name
-              }),
-              () => {router.push('MedicalRecords')} 
+              });
+              router.push('MedicalRecords');
             }else {
-              console.log('displayName upradte err')
+              console.log('displayName upradte err');
             }
           },
           // console.log('add new user'),
@@ -103,12 +111,29 @@ export default {
       }
     }
 
+    function logout() {
+      console.log('user is logged out');
+      auth.signOut().then(console.log('rly loged out ?')
+      ).then(
+        () => {
+          store2.dispatch('setUser', {})
+          router.replace('/')
+        },
+      )
+    }
+
+    function enter() {
+      router.push('MedicalRecords');
+    }
+
     return {
       state,
       loginUser,
       registerUser,
+      logout,
       confirmPassword,
-      storeUser
+      storeUser,
+      enter
     }
   }
 }
@@ -123,6 +148,11 @@ export default {
   color: red;
   font-size: 0.8rem;
   font-weight: 100;
+}
+
+.btnWrap {
+  width: 100%;
+  @include displayFlex(row, space-evenly, center);
 }
 
 </style>

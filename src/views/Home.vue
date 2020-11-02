@@ -1,9 +1,8 @@
 <template>
   <div class="home">
 
-    <p v-if="stats.user">{{ stats.user.email }}</p>
-
-    <p style="color: red"> {{ storeUser.email }}</p>
+    <!-- <p v-if="stats.user">{{ stats.user.email }}</p>
+    <p style="color: red"> {{ storeUser.email }}</p> -->
 
     <section class="doctorForms">
       <!-- TODO ///// sprav prihlasovanie pre lekárov na základe rod. cisla a spec. hesla -->
