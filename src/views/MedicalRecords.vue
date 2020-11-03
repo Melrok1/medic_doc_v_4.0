@@ -194,9 +194,9 @@ export default {
 
 }
 
-.small {
+// .small {
   
-}
+// }
 
 
 </style>
