@@ -1,9 +1,6 @@
 <template>
   <div class="home">
 
-    <!-- <p v-if="stats.user">{{ stats.user.email }}</p>
-    <p style="color: red"> {{ storeUser.email }}</p> -->
-
     <section class="doctorForms">
       <!-- TODO ///// sprav prihlasovanie pre lekárov na základe rod. cisla a spec. hesla -->
     </section>
@@ -41,18 +38,7 @@ export default {
       toggle: false
     })
 
-    // const storeUser = computed(() => {
-    //   return stats.user = store.stats.user
-    // })
-
     // HOOKS
-    // onMounted(() => {
-    // followUser();
-    //   store.dispatch('setUser', stats.user);
-    // }),
-    // onUnmounted(() => {
-    //   store.dispatch('setUser', null);
-    // }),
     onMounted(() => {
       auth.onAuthStateChanged(user => {
         stats.toggle = !!user;
