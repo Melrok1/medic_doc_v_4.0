@@ -5,6 +5,9 @@
       <medicalRecordsNavBar />
     </header>
 
+      <medicalRecordsAddCategoryForm v-model:meno="meno" v-model:category="category"/>
+      <p>{{ meno }}</p>
+      <p>{{ category }}</p>
     <main>
       <!-- Add folder btn -->
       <section class="foldersWrap">
@@ -16,9 +19,6 @@
         </div>
       </section>
 
-      <medicalRecordsAddCategoryForm v-model:meno="state.meno" v-model:category="category"/>
-      <p>{{ state.meno }}</p>
-      <p>{{ category }}</p>
 
       <!-- Created folders -->
       <section class="foldersWrap" v-if="state.cards.length">
@@ -72,11 +72,11 @@ export default {
 
   setup() {
     const store2 = useStore();
-    // const meno = ref("");
+    const meno = ref("");
     const category = ref("");
 
     const state = reactive({
-      meno: '',
+      // meno: '',
       birthNumber: '',
       phoneNumber: '',
       DoctorName: '',
@@ -86,7 +86,7 @@ export default {
     })
 
     function addNewCategory() {
-      state.cards.push({"name": state.meno});
+      state.cards.push({"name": meno.value});
     }
 
     onMounted(() => {
@@ -100,7 +100,7 @@ export default {
     )
 
     return {
-      // meno,
+      meno,
       category,
       addNewCategory,
       state,
