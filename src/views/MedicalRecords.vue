@@ -6,14 +6,27 @@
     </header>
 
     <main>
+      <!-- Add folder btn -->
       <section class="foldersWrap">
-        <div class="folder">
-          <p>+ <br> Add Folder</p>
+        <div class="folder" @click="addNewCategory">
+          <p class="noselect">+ <br> Add Folder</p>
         </div>
+        <div class="folder">
+          <p class="noselect">Posledná správa</p>
+        </div>
+      </section>
+
+      <medicalRecordsAddCategoryForm v-model:meno="state.meno" v-model:category="category"/>
+      <p>{{ state.meno }}</p>
+      <p>{{ category }}</p>
+
+      <!-- Created folders -->
+      <section class="foldersWrap" v-if="state.cards.length">
         <div class="cardsCategories" v-for="(card, index) in state.cards" :key="index">
           <div class="folder small">
-            <p>{{ card.name }}</p>
+            <p class="noselect">+</p>
           </div>
+            <p class="cardName noselect">{{ card.name }}</p>
         </div>
       </section>
 
@@ -46,30 +59,35 @@
 
 <script>
 import medicalRecordsNavBar from '@/components/MedicalRecords_NavBar.vue'
-import { onMounted, reactive } from 'vue'
+import medicalRecordsAddCategoryForm from '@/components/MedicalRecords_AddCategoryForm.vue'
+import { onMounted, reactive, ref } from 'vue'
 import { auth } from '@/firebase/init.js'
 import { useStore } from 'vuex'
-
 
 export default {
   name: 'MedicalRecords',
   components: {
-    medicalRecordsNavBar
+    medicalRecordsNavBar, medicalRecordsAddCategoryForm
   },
 
   setup() {
     const store2 = useStore();
+    // const meno = ref("");
+    const category = ref("");
 
     const state = reactive({
+      meno: '',
       birthNumber: '',
       phoneNumber: '',
       DoctorName: '',
       DoctorPhone: '',
       user: {},
-      cards: [
-        {name: 'Neurologia'}, {name: 'Gastro'}, {name: 'Hematologia'}, {name: 'Očné'}, {name: 'Kardiológia'}
-      ]
+      cards: []
     })
+
+    function addNewCategory() {
+      state.cards.push({"name": state.meno});
+    }
 
     onMounted(() => {
       auth.onAuthStateChanged(user => {
@@ -82,6 +100,9 @@ export default {
     )
 
     return {
+      // meno,
+      category,
+      addNewCategory,
       state,
       store2,
     }
@@ -98,16 +119,19 @@ export default {
     position: relative;
 
     .foldersWrap {
+      @include displayFlex(row, center, center);
       width: 80%;
       margin: 0 auto;
-      padding: 3rem;
-      @include displayFlex(row, center, center);
+      padding: 1rem;
+      flex-wrap: wrap;
+      // background: #000;
 
       .folder {
         @include displayFlex(column, center, center);
         position: relative;
         width: 5rem;
         height: 5rem;
+        margin: 1rem 3rem;
         color: #fff;
         font-weight: 900;
         letter-spacing: 1px;
@@ -152,6 +176,32 @@ export default {
           z-index: -2;
         }
       }
+
+      .small {
+        width: 3rem;
+        height: 3rem;
+        margin-top: 2rem;
+
+        p {
+          transform: translateY(0rem);
+          font-size: 3rem;
+          font-weight: 900;
+        }
+      }
+
+      .cardName {
+        color: #fff;
+        text-shadow:  2px 0 0 $Primary_color, -2px 0 0 $Primary_color, 0 2px 0 $Primary_color, 0 -2px 0 $Primary_color,
+                      1px 1px $Primary_color, -1px -1px 0 $Primary_color, 1px -1px 0 $Primary_color, -1px 1px 0 $Primary_color;
+        letter-spacing: 1px;
+        font-weight: 600;
+      }
+    }
+
+    .foldersWrap:nth-child(2) {
+      background: rgba($Primary_color, 70%);
+      border: 3px solid #fff;
+      filter: drop-shadow(2px 2px 2px rgb(89, 89, 89));
     }
   }
 
@@ -160,10 +210,11 @@ export default {
     top: 0;
     right: 0;
     width: 300px;
-    height: calc(100vh - 35.19px);
+    // height: calc(100vh - 35.19px);
     background: rgba($Primary_color, 70%);
     color: $Primary_color;
     padding: 2rem 1rem;
+    border: 3px solid #fff;
 
     .userProfileForm {
       background: $Form_gradient;
@@ -191,12 +242,22 @@ export default {
       }
     }
   }
-
 }
 
-// .small {
-  
-// }
+@media only screen and (max-width: 370px) {
+
+  .foldersWrap:nth-child(2) {
+    padding: 0 !important;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+
+  .foldersWrap:nth-child(2) {
+    width: 95% !important;
+  }
+}
+
 
 
 </style>
