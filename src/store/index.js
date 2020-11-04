@@ -3,7 +3,8 @@ import { createStore } from 'vuex'
 export default createStore({
   state: {
     userFromStore: {},
-    showUserProfile: false
+    showUserProfile: false,
+    showAddNewFileForm: false,
   },
   mutations: {  
     SET_USER(state, user) {
@@ -11,6 +12,9 @@ export default createStore({
     },
     SHOW_PROFILE(state, show) {
       state.showUserProfile = show
+    },
+    SHOW_ADD_NEW_FILE_FORM(state, show) {
+      state.showAddNewFileForm = show
     }
   },
   actions: {  
@@ -19,6 +23,9 @@ export default createStore({
     },
     showProfile({commit}, show) {
       commit('SHOW_PROFILE', show)
+    },
+    showAddNewFileForm({commit}, show) {
+      commit('SHOW_ADD_NEW_FILE_FORM', show)
     }
   },
   modules: {

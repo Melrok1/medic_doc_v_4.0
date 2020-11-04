@@ -5,9 +5,6 @@
       <medicalRecordsNavBar />
     </header>
 
-      <medicalRecordsAddCategoryForm v-model:meno="meno" v-model:category="category"/>
-      <p>{{ meno }}</p>
-      <p>{{ category }}</p>
     <main>
       <!-- Add folder btn -->
       <section class="foldersWrap">
@@ -48,8 +45,11 @@
           <button>Upraviť údaje</button>
         </form>
       </section>
+
+
     </main>
 
+    <medicalRecordsAddCategoryForm v-if="store2.state.showAddNewFileForm" />
   </div>
 </template>
 
@@ -60,7 +60,7 @@
 <script>
 import medicalRecordsNavBar from '@/components/MedicalRecords_NavBar.vue'
 import medicalRecordsAddCategoryForm from '@/components/MedicalRecords_AddCategoryForm.vue'
-import { onMounted, reactive, ref } from 'vue'
+import { onMounted, reactive } from 'vue'
 import { auth } from '@/firebase/init.js'
 import { useStore } from 'vuex'
 
@@ -72,11 +72,8 @@ export default {
 
   setup() {
     const store2 = useStore();
-    const meno = ref("");
-    const category = ref("");
 
     const state = reactive({
-      // meno: '',
       birthNumber: '',
       phoneNumber: '',
       DoctorName: '',
@@ -86,7 +83,7 @@ export default {
     })
 
     function addNewCategory() {
-      state.cards.push({"name": meno.value});
+      store2.dispatch('showAddNewFileForm', true);
     }
 
     onMounted(() => {
@@ -100,8 +97,6 @@ export default {
     )
 
     return {
-      meno,
-      category,
       addNewCategory,
       state,
       store2,
