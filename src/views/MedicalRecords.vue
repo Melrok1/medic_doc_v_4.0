@@ -23,12 +23,12 @@
           <div class="folder small">
             <p class="noselect">+</p>
           </div>
-            <p class="cardName noselect">{{ card.name }}</p>
+            <p class="cardName noselect">{{ card }}</p>
         </div>
       </section>
 
       <section class="userProfileSection" v-if="store2.state.showUserProfile">
-        <form class="userProfileForm" @submit.prevent>
+        <form class="userProfileForm" @submit.prevent="updateUserDataFirestore">
           <p>Meno:</p>
           <input type="text" v-model="state.user.name">
           <p>Email:</p>
@@ -61,7 +61,7 @@
 import medicalRecordsNavBar from '@/components/MedicalRecords_NavBar.vue'
 import medicalRecordsAddCategoryForm from '@/components/MedicalRecords_AddCategoryForm.vue'
 import { onMounted, reactive } from 'vue'
-import { auth } from '@/firebase/init.js'
+import { db, auth } from '@/firebase/init.js'
 import { useStore } from 'vuex'
 
 export default {
@@ -86,17 +86,49 @@ export default {
       store2.dispatch('showAddNewFileForm', true);
     }
 
+    function updateUserDataFirestore() {
+      db.collection(state.user.uid).doc("Personal_Records").update({
+        birthNumber: state.birthNumber,
+        phoneNumber: state.phoneNumber,
+        DoctorName: state.DoctorName,
+        DoctorPhone: state.DoctorPhone
+      })
+    }
+
     onMounted(() => {
       auth.onAuthStateChanged(user => {
         if(user) {
+
           state.user.name = user.displayName;
           state.user.email = user.email;
+          state.user.uid = user.uid;
+
+          db.collection(user.uid).doc("Personal_Records").get()
+          .then(doc => {
+            if(doc) {
+              console.log(doc.data())
+              state.birthNumber = doc.data().birthNumber;
+              state.phoneNumber = doc.data().phoneNumber;
+              state.DoctorName = doc.data().DoctorName;
+              state.DoctorPhone = doc.data().DoctorPhone;
+            }else {
+              console.log( 'Document not found' );
+            }
+          })
+          .catch(err => console.log('Err in get doc' + err));
+
+          db.collection(user.uid).doc("Medical_Records").get()
+          .then(doc => {
+            console.log(doc.data())
+          })
         }
       })
-    } 
-    )
+
+
+    })
 
     return {
+      updateUserDataFirestore,
       addNewCategory,
       state,
       store2,

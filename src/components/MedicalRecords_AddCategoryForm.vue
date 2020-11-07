@@ -22,11 +22,25 @@ export default {
     const store2 = useStore();
     const userId = ref(store2.state.userFromStore.uid);
     const categoryName = ref('');
+    // const data = {};
+    // const cName = computed(() => {
+    //   data.categoryName.value
+    //   return data
+    // })
+
 
     function addCategoryToFirebase() {
       // db.collection('user').doc(userId.value).set({'name': categoryName})
-      db.collection(userId.value).doc("Medical_Records").set({
-        name: categoryName.value,
+      // let cNAme = categoryName.value;
+
+      db.collection(userId.value).doc("Medical_Records").update({
+        [categoryName.value]: {
+          id: {
+            name: '',
+            url: '',
+            dr: ''
+          },
+        }
       })
       .then(function() {
         console.log("Document successfully written!");

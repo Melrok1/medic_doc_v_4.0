@@ -46,7 +46,7 @@
 
 <script>
 import { computed, reactive } from 'vue'
-import { auth } from '@/firebase/init.js'
+import { db, auth } from '@/firebase/init.js'
 import { useStore } from 'vuex'
 import router from '@/router'
 
@@ -100,6 +100,8 @@ export default {
               await user.updateProfile({
                 displayName: state.login_register_name
               });
+              await db.collection(user.uid).doc("Medical_Records").set({});
+              await db.collection(user.uid).doc("Personal_Records").set({});
               router.push('MedicalRecords');
             }else {
               console.log('displayName upradte err');
