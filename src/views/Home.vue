@@ -33,7 +33,7 @@ export default {
     const storeUser = computed(() => store2.state.userFromStore)
 
 
-    const stats = reactive({
+    const state = reactive({
       user: {},
       toggle: false
     })
@@ -41,12 +41,12 @@ export default {
     // HOOKS
     onMounted(() => {
       auth.onAuthStateChanged(user => {
-        stats.toggle = !!user;
+        state.toggle = !!user;
         if(user) {
-          stats.user = user;
-          store2.dispatch('setUser', stats.user);
-          // stats.user.email = user.email;
-          // stats.user.name = user.displayName;
+          state.user = user;
+          store2.dispatch('setUser', state.user);
+          // state.user.email = user.email;
+          // state.user.name = user.displayName;
         }
       })
     } 
@@ -54,7 +54,7 @@ export default {
 
 
     return {
-      stats,
+      state,
       storeUser
     }
 

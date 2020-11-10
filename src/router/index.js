@@ -4,6 +4,7 @@ import Home from '../views/Home.vue'
 import About from '@/views/About.vue'
 import MedicalRecords from '@/views/MedicalRecords.vue'
 import Page404 from '@/views/Page404.vue'
+import CategoryPage from '@/views/CategoryPage.vue'
 
 
 const routes = [
@@ -21,6 +22,14 @@ const routes = [
     path: '/medicalRecords',
     name: 'MedicalRecords',
     component: MedicalRecords,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/categoryPage/:categoryName',
+    name: 'CategoryPage',
+    component: CategoryPage,
     meta: {
       requiresAuth: true
     }

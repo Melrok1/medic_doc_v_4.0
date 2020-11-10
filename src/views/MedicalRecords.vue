@@ -20,7 +20,7 @@
       <!-- Created folders -->
       <section class="foldersWrap" v-if="state.cards.length > 0">  <!--  v-if="state.cards.length"  -->
         <div class="cardsCategories" v-for="(card, index) in state.cards" :key="index">
-          <div class="folder small">
+          <div class="folder small" @click="openCategoryPage(card.name)">
             <p class="noselect">+</p>
           </div>
             <p class="cardName noselect">{{ card.name }}</p>
@@ -64,6 +64,8 @@ import medicalRecordsAddCategoryForm from '@/components/MedicalRecords_AddCatego
 import { onMounted, reactive } from 'vue'
 import { db, auth } from '@/firebase/init.js'
 import { useStore } from 'vuex'
+// import { useRoute } from 'vue-router'
+import router from '@/router'
 
 export default {
   name: 'MedicalRecords',
@@ -97,6 +99,10 @@ export default {
     // let compCateg = computed(() => {
     //   db.collection(state.user.uid).doc("Medical_Records").get()
     // })
+
+    function openCategoryPage(name) {
+      router.push(`/categoryPage/${name}`);
+    }
 
     function addNewCategory() {
       store2.dispatch('showAddNewFileForm', true);
@@ -134,14 +140,6 @@ export default {
           })
           .catch(err => console.log('Err in get doc' + err));
 
-          // db.collection(user.uid).doc("Medical_Records").get()
-          // .then(doc => {
-            
-          //   console.log(Object.entries(doc.data()));
-          //   state.cards = Object.entries(doc.data());
-          //   // state.cards.push(doc.data());
-          // }
-          // )
         }
 
         db.collection(`users/${auth.currentUser.uid}/Medical_Records`).onSnapshot(snapshot => {
@@ -167,6 +165,7 @@ export default {
 
     return {
       // compCateg,
+      openCategoryPage,
       updateUserDataFirestore,
       addNewCategory,
       state,
@@ -175,6 +174,9 @@ export default {
   }
 }
 </script>
+
+
+<!-- ////////////////////////////////////////////////////////////////////////////// -->
 
 
 <style lang="scss" scoped>
