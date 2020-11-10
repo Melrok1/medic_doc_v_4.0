@@ -100,8 +100,8 @@ export default {
               await user.updateProfile({
                 displayName: state.login_register_name
               });
-              await db.collection(user.uid).doc("Medical_Records").set({});
-              await db.collection(user.uid).doc("Personal_Records").set({});
+              await db.collection('users').doc(user.uid).collection('Medical_Records').add({});
+              await db.collection('users').doc(user.uid).collection('Personal_Records').add({});
               router.push('MedicalRecords');
             }else {
               console.log('displayName upradte err');

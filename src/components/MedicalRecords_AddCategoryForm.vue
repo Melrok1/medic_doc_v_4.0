@@ -35,8 +35,9 @@ export default {
     })
 
     function addCategoryToFirebase() {
-      db.collection(state.userId).doc("Medical_Records").update({
-        [categoryName.value]: []
+      db.collection(`users/${state.userId}/Medical_Records`).doc(categoryName.value).set({
+        name: categoryName.value,
+        records: []
       })
       .then(function() {
         console.log("Document successfully written!" + "//" + IdGenerator.value );

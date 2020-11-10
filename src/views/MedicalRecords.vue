@@ -19,11 +19,11 @@
 
       <!-- Created folders -->
       <section class="foldersWrap" >  <!--  v-if="state.cards.length"  -->
-        <div class="cardsCategories" v-for="(card, index) in state.cards[0]" :key="index">
+        <div class="cardsCategories" v-for="(card, index) in state.cards" :key="index">
           <div class="folder small">
             <p class="noselect">+</p>
           </div>
-            <p class="cardName noselect">{{ index }}</p>
+            <p class="cardName noselect">{{ card.name }}</p>
         </div>
       </section>
 
@@ -144,14 +144,14 @@ export default {
           // )
         }
 
-        db.collection(auth.currentUser.uid).onSnapshot(snapshot => {
+        db.collection(`users/${auth.currentUser.uid}/Medical_Records`).onSnapshot(snapshot => {
           let changes = snapshot.docChanges();
           // console.log(changes);
           changes.forEach(change => {
             if(change.type == 'added') {
               state.cards.push(change.doc.data())
+              console.log(change.doc.data())
             }
-            console.log(change.doc.data())
           })
         })
         // .then(doc => {
