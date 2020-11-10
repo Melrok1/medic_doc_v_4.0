@@ -2,48 +2,45 @@
   <div class="AddCategoryForm">
     <div class="shadowBackground" @click="closeCategoryForm"></div>
     <form class="baseForm" @submit.prevent="addCategoryToFirebase">
-      <p>{{ userId }}</p>
+      <p>{{ state.userId }}</p>
+      <p>{{ IdGenerator }}</p>
       <input type="text" placeholder="Meno zložky" v-model="categoryName">
-      <button>Vytvor zložku</button>
       <button class="close" @click="closeCategoryForm">✕</button>
+      <button>Vytvor zložku</button>
     </form>
   </div>
 </template>
 
 <script>
 import { useStore } from 'vuex'
-import { db } from '@/firebase/init.js'
-import { ref } from 'vue';
+import { db, auth } from '@/firebase/init.js'
+import { computed, onMounted, reactive, ref } from 'vue';
 
 export default {
 
   name: 'AddNewCategoryForm',
   setup() {
     const store2 = useStore();
-    const userId = ref(store2.state.userFromStore.uid);
     const categoryName = ref('');
-    // const data = {};
-    // const cName = computed(() => {
-    //   data.categoryName.value
-    //   return data
-    // })
 
+    const state = reactive({
+      userId: '',
+      // testId: Number(new Date()).toString()
+    })
+
+    const IdGenerator = computed(() => {
+      let date = new Date();
+      let id = Number(date).toString();
+      return id;
+    })
 
     function addCategoryToFirebase() {
-      // db.collection('user').doc(userId.value).set({'name': categoryName})
-      // let cNAme = categoryName.value;
-
-      db.collection(userId.value).doc("Medical_Records").update({
-        [categoryName.value]: {
-          id: {
-            name: '',
-            url: '',
-            dr: ''
-          },
-        }
+      db.collection(state.userId).doc("Medical_Records").update({
+        [categoryName.value]: []
       })
       .then(function() {
-        console.log("Document successfully written!");
+        console.log("Document successfully written!" + "//" + IdGenerator.value );
+        closeCategoryForm();
       })
       .catch(function(error) {
         console.error("Error writing document: ", error);
@@ -55,12 +52,23 @@ export default {
       store2.dispatch('showAddNewFileForm', false);
     }
 
+    onMounted(() => {
+      auth.onAuthStateChanged((user) => {
+        if(user) {
+          state.userId = user.uid;
+        }else {
+          console.log("Add category form err")
+        }
+      })
+    })
+
     return {
+      state,
       categoryName,
-      userId,
       store2,
       closeCategoryForm,
-      addCategoryToFirebase
+      addCategoryToFirebase,
+      IdGenerator
     }
   }
 }

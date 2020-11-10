@@ -1,5 +1,5 @@
 <template>
-  <div class="medicalRecords" v-cloak>
+  <div class="medicalRecords">
 
     <header>
       <medicalRecordsNavBar />
@@ -18,12 +18,12 @@
 
 
       <!-- Created folders -->
-      <section class="foldersWrap" v-if="state.cards.length">
-        <div class="cardsCategories" v-for="(card, index) in state.cards" :key="index">
+      <section class="foldersWrap" >  <!--  v-if="state.cards.length"  -->
+        <div class="cardsCategories" v-for="(card, index) in state.cards[0]" :key="index">
           <div class="folder small">
             <p class="noselect">+</p>
           </div>
-            <p class="cardName noselect">{{ card }}</p>
+            <p class="cardName noselect">{{ index }}</p>
         </div>
       </section>
 
@@ -46,6 +46,7 @@
         </form>
       </section>
 
+      <p>{{ state.cards }}</p>
 
     </main>
 
@@ -80,7 +81,22 @@ export default {
       DoctorPhone: '',
       user: {},
       cards: []
-    })
+    });
+
+    // const compCateg = computed(() => {
+    //   db.collection(state.user.uid).doc("Medical_Records").get()
+    //     .then(doc => {
+        
+    //       console.log(Object.entries(doc.data()));
+          
+    //       state.cards = Object.entries(doc.data());
+    //       // state.cards.push(doc.data());
+    //   })
+    // })
+
+    // let compCateg = computed(() => {
+    //   db.collection(state.user.uid).doc("Medical_Records").get()
+    // })
 
     function addNewCategory() {
       store2.dispatch('showAddNewFileForm', true);
@@ -94,10 +110,11 @@ export default {
         DoctorPhone: state.DoctorPhone
       })
     }
-
+    
     onMounted(() => {
       auth.onAuthStateChanged(user => {
         if(user) {
+          // console.log(user);
 
           state.user.name = user.displayName;
           state.user.email = user.email;
@@ -105,34 +122,55 @@ export default {
 
           db.collection(user.uid).doc("Personal_Records").get()
           .then(doc => {
-            if(doc) {
-              console.log(doc.data())
+            if(doc.exists) {
               state.birthNumber = doc.data().birthNumber;
               state.phoneNumber = doc.data().phoneNumber;
               state.DoctorName = doc.data().DoctorName;
               state.DoctorPhone = doc.data().DoctorPhone;
+              // console.log(state)
             }else {
               console.log( 'Document not found' );
             }
           })
           .catch(err => console.log('Err in get doc' + err));
 
-          db.collection(user.uid).doc("Medical_Records").get()
-          .then(doc => {
-            console.log(doc.data())
-          })
+          // db.collection(user.uid).doc("Medical_Records").get()
+          // .then(doc => {
+            
+          //   console.log(Object.entries(doc.data()));
+          //   state.cards = Object.entries(doc.data());
+          //   // state.cards.push(doc.data());
+          // }
+          // )
         }
+
+        db.collection(auth.currentUser.uid).onSnapshot(snapshot => {
+          let changes = snapshot.docChanges();
+          // console.log(changes);
+          changes.forEach(change => {
+            if(change.type == 'added') {
+              state.cards.push(change.doc.data())
+            }
+            console.log(change.doc.data())
+          })
+        })
+        // .then(doc => {
+        //   state.cards = Object.entries(doc.data());
+        // })
       })
+
 
 
     })
 
+
     return {
+      // compCateg,
       updateUserDataFirestore,
       addNewCategory,
       state,
       store2,
-    }
+    };
   }
 }
 </script>
