@@ -18,7 +18,7 @@
 
 
       <!-- Created folders -->
-      <section class="foldersWrap" >  <!--  v-if="state.cards.length"  -->
+      <section class="foldersWrap" v-if="state.cards.length > 0">  <!--  v-if="state.cards.length"  -->
         <div class="cardsCategories" v-for="(card, index) in state.cards" :key="index">
           <div class="folder small">
             <p class="noselect">+</p>
@@ -103,7 +103,7 @@ export default {
     }
 
     function updateUserDataFirestore() {
-      db.collection(state.user.uid).doc("Personal_Records").update({
+      db.collection(`users/${auth.currentUser.uid}/Personal_Records`).doc('Personal_data').set({
         birthNumber: state.birthNumber,
         phoneNumber: state.phoneNumber,
         DoctorName: state.DoctorName,
@@ -120,14 +120,14 @@ export default {
           state.user.email = user.email;
           state.user.uid = user.uid;
 
-          db.collection(user.uid).doc("Personal_Records").get()
+          db.collection(`users/${auth.currentUser.uid}/Personal_Records`).doc('Personal_data').get()
           .then(doc => {
             if(doc.exists) {
               state.birthNumber = doc.data().birthNumber;
               state.phoneNumber = doc.data().phoneNumber;
               state.DoctorName = doc.data().DoctorName;
               state.DoctorPhone = doc.data().DoctorPhone;
-              // console.log(state)
+              console.log(doc.docs.data())
             }else {
               console.log( 'Document not found' );
             }
@@ -149,8 +149,9 @@ export default {
           // console.log(changes);
           changes.forEach(change => {
             if(change.type == 'added') {
-              state.cards.push(change.doc.data())
-              console.log(change.doc.data())
+              state.cards.push(change.doc.data());
+              // console.table(change.doc.data());
+              // console.log(state.cards.length)
             }
           })
         })
