@@ -18,7 +18,7 @@
 
 
       <!-- Created folders -->
-      <section class="foldersWrap" v-if="state.cards.length > 0">  <!--  v-if="state.cards.length"  -->
+      <section class="foldersWrap" v-if="state.cards.length > 0" v-cloak>  <!--  v-if="state.cards.length"  -->
         <div class="cardsCategories" v-for="(card, index) in state.cards" :key="index">
           <div class="folder small" @click="openCategoryPage(card.name)">
             <p class="noselect">+</p>
@@ -267,7 +267,8 @@ export default {
     }
 
     .foldersWrap:nth-child(2) {
-      background: rgba($Primary_color, 70%);
+      // background: rgba($Primary_color, 70%);
+      background: rgba($Secondary_color, 0.7);
       border: 3px solid #fff;
       filter: drop-shadow(2px 2px 2px rgb(89, 89, 89));
     }
@@ -279,7 +280,8 @@ export default {
     right: 0;
     width: 300px;
     // height: calc(100vh - 35.19px);
-    background: rgba($Primary_color, 70%);
+    // background: rgba($Primary_color, 70%);
+    background: rgba($Secondary_color, 0.7);
     color: $Primary_color;
     padding: 2rem 1rem;
     border: 3px solid #fff;

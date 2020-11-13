@@ -5,17 +5,39 @@
     </header>
 
     <main>
-      <h1>Category name: {{ constCategoryName }}</h1>
-      <h5>User Name:</h5>
-      <h5>User ID:</h5>
-      <div v-for="(item, index) in state.data.records" :key="index">
-        <div class="singleReportContent">
-          <h4>Datum:{{ item.date }}</h4>
-          <h4>Dr.:{{ item.dr }}</h4>
-          <img :src="item.url" :alt='item.id' height="200">
-          <p class="singleReportContent__id">{{ item.id }}</p>
+      <div class="report__mainHeader">
+        <router-link to="/medicalRecords" class="btn"> Home </router-link>
+        <h1>{{ constCategoryName }}</h1>
+        <div class="btn btnWidth" @click="state.showRecords = false" v-if="state.showRecords"> Pridať správu </div>
+        <div class="btn btnWidth" @click="state.showRecords = true" v-if="!state.showRecords">Zobraziť správy</div>
+      </div>
+
+      <!-- Add Records -->
+      <div class="addRecords" v-if="!state.showRecords">
+        <form class="baseForm" @submit.prevent="addNewRecord">
+          <input type="text" placeholder="meno lekára" v-model="state.drName">
+          <input type="date" placeholder="dátum" v-model="state.date">
+          <input type="text" placeholder="url správy" v-model="state.url">
+          <button type="submit">Pridaj správu</button>
+        </form>
+      </div>
+
+      <!-- Records -->
+      <div v-if="state.showRecords">
+        <div v-for="(item, index) in state.data.records" :key="index">
+          <div class="singleReport__Content">
+            <header class="singleReport__header">
+              <p>Dátum: <span>{{ item.date }}</span> </p>
+              <p>Dr. <span>{{ item.dr }}</span> </p>
+              <p>{{ item.id }}</p>
+            </header>
+            <section>
+              <img :src="item.url" :alt='item.id' height="200"> 
+            </section>
+          </div>
         </div>
       </div>
+
     </main>
   </div>
 </template>
@@ -25,7 +47,7 @@
 
 <script>
 import medicalRecordsNavBar from '@/components/MedicalRecords_NavBar.vue'
-import { onMounted, reactive } from 'vue'
+import { onMounted, reactive, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { db, auth } from '@/firebase/init.js'
 
@@ -41,18 +63,70 @@ export default {
 
 
     const state = reactive({
+      drName: '',
+      date: '',
+      url: '',
+      showRecords: true,
       data: []
     })
 
+    const IdGenerator = computed(() => {
+      let date = new Date();
+      let id = Number(date).toString();
+      return id;
+    })
+
+    function addNewRecord() {
+      console.log(state.drName, state.date, state.url);
+      db.collection(`users/${auth.currentUser.uid}/Medical_Records`).doc(`${constCategoryName}`).set({
+        records: {[IdGenerator.value]:{
+          category: constCategoryName,
+          date: state.date,
+          dr: state.drName,
+          id: IdGenerator.value,
+          url: state.url
+        }}
+      },{merge: true})
+    }
+
     onMounted(() => {
-      db.collection(`users/${auth.currentUser.uid}/Medical_Records`).doc(constCategoryName).get()
-        .then((data) => {
-          state.data = data.data();
-          console.log(data.docs)
+        db.collection(`users/${auth.currentUser.uid}/Medical_Records`).onSnapshot(snapshot => {
+          let changes = snapshot.docChanges();
+          // console.log(changes);
+          changes.forEach(change => {
+            if(change.type == 'added') {
+              state.data.push(change.doc.data());
+              console.log(state.data)
+              // console.table(change.doc.data());
+              // console.log(state.cards.length)
+            }
+          })
         })
+
+
+      // db.collection(`users/${auth.currentUser.uid}/Medical_Records`).doc(constCategoryName).onSnapshot(snapshot => {
+      //   let changes = snapshot.docChanges();
+
+      //   changes.forEach(change => {
+      //     if(change.type == 'added') {
+
+      //       state.data.push(change.doc.data());
+
+      //     }
+      //   })
+      // })
+
+
+
+        // .then((data) => {
+        //   state.data = data.data();
+        //   console.log(data.docs)
+        // })
     })
 
     return {
+      IdGenerator,
+      addNewRecord,
       constCategoryName,
       state
     }
@@ -64,22 +138,58 @@ export default {
 
 <style lang="scss" scoped>
 
+.report__mainHeader {
+  @include displayFlex(row, space-evenly, center);
+  // border: 1px solid black;
+
+  .btn {
+    @include formButton1;
+    text-decoration: none;
+  }
+  .btnWidth{
+    width: 12rem;
+  }
+}
+
 main {
-  .singleReportContent {
+  .addRecords {
+
+    .baseForm {
+      transform: translateY(0);
+      margin: 2rem auto;
+    }
+  }
+
+  .singleReport__Content {
     position: relative;
     margin: 1rem;
-    padding: 1rem;
-    background: rgb(220, 220, 220);
+    // padding: 1rem;
+    background: rgba($Secondary_color, 0.7);
+    filter: drop-shadow(2px 2px 2px rgb(89, 89, 89));
     
-    h4 {
-      display: inline-block;
-      margin-right: 3rem;
+    header {
+      @include displayFlex(row, space-between, baseline);
+      background: $Primary_color;
+      color: #fff;
+      p {
+        display: inline-block;
+        padding: 0.5rem;
+      }
+
+      span {
+        font-weight: 800;
+        // letter-spacing: 1px;
+        font-size: 1.2rem;
+      }
     }
 
-    .singleReportContent__id {
-      position: absolute;
-      top: 1rem;
-      left: 1rem;
+    section {
+      padding: 1rem;
+      border: {
+        right: 3px solid #fff;
+        bottom: 3px solid #fff;
+        left: 3px solid #fff;
+      }
     }
   }
 }
