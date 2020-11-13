@@ -24,7 +24,7 @@
 
       <!-- Records -->
       <div v-if="state.showRecords">
-        <div v-for="(item, index) in state.data.records" :key="index">
+        <div v-for="(item, index) in state.data" :key="index">
           <div class="singleReport__Content">
             <header class="singleReport__header">
               <p>Dátum: <span>{{ item.date }}</span> </p>
@@ -67,7 +67,7 @@ export default {
       date: '',
       url: '',
       showRecords: true,
-      data: []
+      data: {}
     })
 
     const IdGenerator = computed(() => {
@@ -90,38 +90,33 @@ export default {
     }
 
     onMounted(() => {
-        db.collection(`users/${auth.currentUser.uid}/Medical_Records`).onSnapshot(snapshot => {
-          let changes = snapshot.docChanges();
-          // console.log(changes);
-          changes.forEach(change => {
-            if(change.type == 'added') {
-              state.data.push(change.doc.data());
-              console.log(state.data)
-              // console.table(change.doc.data());
-              // console.log(state.cards.length)
-            }
-          })
-        })
-
-
-      // db.collection(`users/${auth.currentUser.uid}/Medical_Records`).doc(constCategoryName).onSnapshot(snapshot => {
-      //   let changes = snapshot.docChanges();
-
-      //   changes.forEach(change => {
-      //     if(change.type == 'added') {
-
-      //       state.data.push(change.doc.data());
-
-      //     }
-      //   })
-      // })
-
-
-
-        // .then((data) => {
-        //   state.data = data.data();
-        //   console.log(data.docs)
+        // db.collection(`users/${auth.currentUser.uid}/Medical_Records`).doc(constCategoryName).onSnapshot(snapshot => {
+        //   let changes = snapshot.docChanges();
+        //   console.log(changes);
+        //   changes.forEach(change => {
+        //     if(change.type == 'added') {
+        //       state.data.push(change.doc.data());
+        //       console.log(state.data)
+        //       // console.table(change.doc.data());
+        //       // console.log(state.cards.length)
+        //     }
+        //   })
         // })
+
+
+      db.collection(`users/${auth.currentUser.uid}/Medical_Records`).doc(constCategoryName).get()
+        .then((doc) => {
+          let readDataFromDb = doc.data();
+          let unsorted = readDataFromDb.records;
+          let sorted = {};
+
+          Object.keys(unsorted).sort((a,b) => b - a).forEach(function(key) {
+            sorted[key] = unsorted[key];
+          });
+
+          state.data = sorted;
+          console.log(sorted);
+        })
     })
 
     return {
