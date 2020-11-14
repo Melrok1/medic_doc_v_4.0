@@ -30,6 +30,7 @@
               <p>Dátum: <span>{{ item.date }}</span> </p>
               <p>Dr. <span>{{ item.dr }}</span> </p>
               <p>{{ item.id }}</p>
+              <p class="closeBtn" @click="deleteSingleReport(item.id)"> <span>X</span></p>
             </header>
             <section>
               <img :src="item.url" :alt='item.id' height="200"> 
@@ -50,6 +51,7 @@ import medicalRecordsNavBar from '@/components/MedicalRecords_NavBar.vue'
 import { onMounted, reactive, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { db, auth } from '@/firebase/init.js'
+import firebase from '@firebase/app';
 
 export default {
   name: 'CategoryPage',
@@ -77,7 +79,7 @@ export default {
     })
 
     function addNewRecord() {
-      console.log(state.drName, state.date, state.url);
+      // console.log(state.drName, state.date, state.url);
       db.collection(`users/${auth.currentUser.uid}/Medical_Records`).doc(`${constCategoryName}`).set({
         records: {[IdGenerator.value]:{
           category: constCategoryName,
@@ -86,7 +88,15 @@ export default {
           id: IdGenerator.value,
           url: state.url
         }}
-      },{merge: true})
+      },{merge: true});
+      state.showRecords = true;
+    }
+
+    function deleteSingleReport(id) {
+      console.log(id);
+      db.collection(`users/${auth.currentUser.uid}/Medical_Records`).doc(`${constCategoryName}`).set({
+        records: { [id]: firebase.firestore.FieldValue.delete() }
+      },{merge: true});
     }
 
     onMounted(() => {
@@ -110,7 +120,7 @@ export default {
           let unsorted = readDataFromDb.records;
           let sorted = {};
 
-          Object.keys(unsorted).sort((a,b) => b - a).forEach(function(key) {
+          Object.keys(unsorted).sort((a,b) => b - a).forEach((key) => {
             sorted[key] = unsorted[key];
           });
 
@@ -122,6 +132,7 @@ export default {
     return {
       IdGenerator,
       addNewRecord,
+      deleteSingleReport,
       constCategoryName,
       state
     }
@@ -175,6 +186,11 @@ main {
         font-weight: 800;
         // letter-spacing: 1px;
         font-size: 1.2rem;
+      }
+
+      .closeBtn {
+        border: 3px solid #fff;
+        cursor: pointer;
       }
     }
 

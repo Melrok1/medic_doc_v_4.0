@@ -18,6 +18,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const fb = firebase.initializeApp(firebaseConfig);
 
+
 const db = firebase.firestore();
 db.settings({timestampsInSnapshots: true});
 

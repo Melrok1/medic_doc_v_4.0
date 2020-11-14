@@ -18,7 +18,7 @@
 
 
       <!-- Created folders -->
-      <section class="foldersWrap" v-if="state.cards.length > 0" v-cloak>  <!--  v-if="state.cards.length"  -->
+      <section class="foldersWrap" v-if="state.cards.length > 0" v-cloak>  
         <div class="cardsCategories" v-for="(card, index) in state.cards" :key="index">
           <div class="folder small" @click="openCategoryPage(card.name)">
             <p class="noselect">+</p>
@@ -27,6 +27,7 @@
         </div>
       </section>
 
+      <!-- User Profile -->
       <section class="userProfileSection" v-if="store2.state.showUserProfile">
         <form class="userProfileForm" @submit.prevent="updateUserDataFirestore">
           <p>Meno:</p>
@@ -84,21 +85,6 @@ export default {
       user: {},
       cards: []
     });
-
-    // const compCateg = computed(() => {
-    //   db.collection(state.user.uid).doc("Medical_Records").get()
-    //     .then(doc => {
-        
-    //       console.log(Object.entries(doc.data()));
-          
-    //       state.cards = Object.entries(doc.data());
-    //       // state.cards.push(doc.data());
-    //   })
-    // })
-
-    // let compCateg = computed(() => {
-    //   db.collection(state.user.uid).doc("Medical_Records").get()
-    // })
 
     function openCategoryPage(name) {
       router.push(`/categoryPage/${name}`);
