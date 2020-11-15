@@ -120,13 +120,26 @@ export default {
           let unsorted = readDataFromDb.records;
           let sorted = {};
 
-          Object.keys(unsorted).sort((a,b) => b - a).forEach((key) => {
-            sorted[key] = unsorted[key];
-          });
+          console.log(unsorted);
+
+          console.log(Object.values(unsorted)
+                .sort((recA, recB) => Number(new Date(recA.date)).toString() - Number(new Date(recB.date)).toString())
+                .map(date1 => date1)
+          );
+
+          Object.keys(unsorted)
+            .sort((a,b) => b - a)
+            .forEach((key) => {
+              sorted[key] = unsorted[key];
+            });
+
+          // Object.keys(unsorted).sort((a,b) => b - a).forEach((key) => {
+          //   sorted[key] = unsorted[key];
+          // });
 
           state.data = sorted;
-          console.log(unsorted);
-          console.log(sorted);
+          // console.log(unsorted);
+          // console.log(sorted);
         })
     })
 
