@@ -125,6 +125,7 @@ export default {
           });
 
           state.data = sorted;
+          console.log(unsorted);
           console.log(sorted);
         })
     })
