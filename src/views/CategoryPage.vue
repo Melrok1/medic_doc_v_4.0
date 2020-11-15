@@ -69,7 +69,7 @@ export default {
       date: '',
       url: '',
       showRecords: true,
-      data: {}
+      data: []
     })
 
     const IdGenerator = computed(() => {
@@ -79,7 +79,6 @@ export default {
     })
 
     function addNewRecord() {
-      // console.log(state.drName, state.date, state.url);
       db.collection(`users/${auth.currentUser.uid}/Medical_Records`).doc(`${constCategoryName}`).set({
         records: {[IdGenerator.value]:{
           category: constCategoryName,
@@ -100,46 +99,34 @@ export default {
     }
 
     onMounted(() => {
-        // db.collection(`users/${auth.currentUser.uid}/Medical_Records`).doc(constCategoryName).onSnapshot(snapshot => {
-        //   let changes = snapshot.docChanges();
-        //   console.log(changes);
-        //   changes.forEach(change => {
-        //     if(change.type == 'added') {
-        //       state.data.push(change.doc.data());
-        //       console.log(state.data)
-        //       // console.table(change.doc.data());
-        //       // console.log(state.cards.length)
-        //     }
-        //   })
-        // })
-
 
       db.collection(`users/${auth.currentUser.uid}/Medical_Records`).doc(constCategoryName).get()
         .then((doc) => {
           let readDataFromDb = doc.data();
           let unsorted = readDataFromDb.records;
-          let sorted = {};
+          // let sorted = {};
+          let sorted2 = [];
 
+          Object.values(unsorted)
+                .sort((recA, recB) => {
+                  let recA_date = Number(new Date(recA.date)).toString();
+                  let recB_date = Number(new Date(recB.date)).toString();
+                  return recB_date - recA_date;
+                })
+                .forEach(data => {
+                  sorted2.push(data);
+                });
+
+          // Object.keys(unsorted)
+          //   .sort((a,b) => b - a)
+          //   .forEach((key) => {
+          //     sorted[key] = unsorted[key];
+          //   });
+
+
+          state.data = sorted2;
           console.log(unsorted);
-
-          console.log(Object.values(unsorted)
-                .sort((recA, recB) => Number(new Date(recA.date)).toString() - Number(new Date(recB.date)).toString())
-                .map(date1 => date1)
-          );
-
-          Object.keys(unsorted)
-            .sort((a,b) => b - a)
-            .forEach((key) => {
-              sorted[key] = unsorted[key];
-            });
-
-          // Object.keys(unsorted).sort((a,b) => b - a).forEach((key) => {
-          //   sorted[key] = unsorted[key];
-          // });
-
-          state.data = sorted;
-          // console.log(unsorted);
-          // console.log(sorted);
+          console.log(sorted2);
         })
     })
 
