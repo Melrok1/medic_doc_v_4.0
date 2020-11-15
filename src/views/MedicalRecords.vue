@@ -1,5 +1,5 @@
 <template>
-  <div class="medicalRecords" v-cloak>
+  <div class="medicalRecords">
 
     <header>
       <medicalRecordsNavBar />
@@ -18,15 +18,16 @@
 
 
       <!-- Created folders -->
-      <section class="foldersWrap" v-if="state.cards.length">
+      <section class="foldersWrap" v-if="state.cards.length > 0" v-cloak>  
         <div class="cardsCategories" v-for="(card, index) in state.cards" :key="index">
-          <div class="folder small">
+          <div class="folder small" @click="openCategoryPage(card.name)">
             <p class="noselect">+</p>
           </div>
-            <p class="cardName noselect">{{ card }}</p>
+            <p class="cardName noselect">{{ card.name }}</p>
         </div>
       </section>
 
+      <!-- User Profile -->
       <section class="userProfileSection" v-if="store2.state.showUserProfile">
         <form class="userProfileForm" @submit.prevent="updateUserDataFirestore">
           <p>Meno:</p>
@@ -46,6 +47,7 @@
         </form>
       </section>
 
+      <p>{{ state.cards }}</p>
 
     </main>
 
@@ -63,6 +65,8 @@ import medicalRecordsAddCategoryForm from '@/components/MedicalRecords_AddCatego
 import { onMounted, reactive } from 'vue'
 import { db, auth } from '@/firebase/init.js'
 import { useStore } from 'vuex'
+// import { useRoute } from 'vue-router'
+import router from '@/router'
 
 export default {
   name: 'MedicalRecords',
@@ -80,62 +84,85 @@ export default {
       DoctorPhone: '',
       user: {},
       cards: []
-    })
+    });
+
+    function openCategoryPage(name) {
+      router.push(`/categoryPage/${name}`);
+    }
 
     function addNewCategory() {
       store2.dispatch('showAddNewFileForm', true);
     }
 
     function updateUserDataFirestore() {
-      db.collection(state.user.uid).doc("Personal_Records").update({
+      db.collection(`users/${auth.currentUser.uid}/Personal_Records`).doc('Personal_data').set({
         birthNumber: state.birthNumber,
         phoneNumber: state.phoneNumber,
         DoctorName: state.DoctorName,
         DoctorPhone: state.DoctorPhone
       })
     }
-
+    
     onMounted(() => {
       auth.onAuthStateChanged(user => {
         if(user) {
+          // console.log(user);
 
           state.user.name = user.displayName;
           state.user.email = user.email;
           state.user.uid = user.uid;
 
-          db.collection(user.uid).doc("Personal_Records").get()
+          db.collection(`users/${auth.currentUser.uid}/Personal_Records`).doc('Personal_data').get()
           .then(doc => {
-            if(doc) {
-              console.log(doc.data())
+            if(doc.exists) {
               state.birthNumber = doc.data().birthNumber;
               state.phoneNumber = doc.data().phoneNumber;
               state.DoctorName = doc.data().DoctorName;
               state.DoctorPhone = doc.data().DoctorPhone;
+              console.log(doc.docs.data())
             }else {
               console.log( 'Document not found' );
             }
           })
           .catch(err => console.log('Err in get doc' + err));
 
-          db.collection(user.uid).doc("Medical_Records").get()
-          .then(doc => {
-            console.log(doc.data())
-          })
         }
+
+        db.collection(`users/${auth.currentUser.uid}/Medical_Records`).onSnapshot(snapshot => {
+          let changes = snapshot.docChanges();
+          // console.log(changes);
+          changes.forEach(change => {
+            if(change.type == 'added') {
+              state.cards.push(change.doc.data());
+              // console.table(change.doc.data());
+              // console.log(state.cards.length)
+            }
+          })
+        })
+        // .then(doc => {
+        //   state.cards = Object.entries(doc.data());
+        // })
       })
+
 
 
     })
 
+
     return {
+      // compCateg,
+      openCategoryPage,
       updateUserDataFirestore,
       addNewCategory,
       state,
       store2,
-    }
+    };
   }
 }
 </script>
+
+
+<!-- ////////////////////////////////////////////////////////////////////////////// -->
 
 
 <style lang="scss" scoped>
@@ -226,7 +253,8 @@ export default {
     }
 
     .foldersWrap:nth-child(2) {
-      background: rgba($Primary_color, 70%);
+      // background: rgba($Primary_color, 70%);
+      background: rgba($Secondary_color, 0.7);
       border: 3px solid #fff;
       filter: drop-shadow(2px 2px 2px rgb(89, 89, 89));
     }
@@ -238,7 +266,8 @@ export default {
     right: 0;
     width: 300px;
     // height: calc(100vh - 35.19px);
-    background: rgba($Primary_color, 70%);
+    // background: rgba($Primary_color, 70%);
+    background: rgba($Secondary_color, 0.7);
     color: $Primary_color;
     padding: 2rem 1rem;
     border: 3px solid #fff;

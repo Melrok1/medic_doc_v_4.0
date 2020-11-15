@@ -13,6 +13,7 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+  // padding-bottom: 2rem;
 }
 
 
