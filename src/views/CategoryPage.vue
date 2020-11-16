@@ -100,8 +100,8 @@ export default {
 
     onMounted(() => {
 
-      db.collection(`users/${auth.currentUser.uid}/Medical_Records`).doc(constCategoryName).get()
-        .then((doc) => {
+      db.collection(`users/${auth.currentUser.uid}/Medical_Records`).doc(constCategoryName)
+        .onSnapshot((doc) => {
           let readDataFromDb = doc.data();
           let unsorted = readDataFromDb.records;
           // let sorted = {};
