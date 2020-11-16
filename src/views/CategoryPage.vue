@@ -78,17 +78,24 @@ export default {
       return id;
     })
 
+    function IdGenerator2() {
+      let date = new Date();
+      let id = Number(date).toString();
+      return id;
+    }
+
     function addNewRecord() {
       db.collection(`users/${auth.currentUser.uid}/Medical_Records`).doc(`${constCategoryName}`).set({
-        records: {[IdGenerator.value]:{
+        records: {[IdGenerator2()]:{
           category: constCategoryName,
           date: state.date,
           dr: state.drName,
-          id: IdGenerator.value,
+          id: IdGenerator2(),
           url: state.url
         }}
-      },{merge: true});
+      }, { merge: true });
       state.showRecords = true;
+      // console.log(IdGenerator2());
     }
 
     function deleteSingleReport(id) {
@@ -126,16 +133,6 @@ export default {
           state.data = sorted2;
           // console.log(unsorted);
           // console.log(sorted2);
-
-          // db.collection(`users/${auth.currentUser.uid}/Medical_Records`).onSnapshot(snapshot => {
-          //   let changes = snapshot.docChanges();
-          //   changes.forEach(change => {
-          //     if(change.type == 'added') {
-          //       state.cards.push(change.doc.data());
-          //     }
-          //   })
-          // })
-
         })
     })
 
