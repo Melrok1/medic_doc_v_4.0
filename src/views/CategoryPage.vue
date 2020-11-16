@@ -123,10 +123,19 @@ export default {
           //     sorted[key] = unsorted[key];
           //   });
 
-
           state.data = sorted2;
-          console.log(unsorted);
-          console.log(sorted2);
+          // console.log(unsorted);
+          // console.log(sorted2);
+
+          // db.collection(`users/${auth.currentUser.uid}/Medical_Records`).onSnapshot(snapshot => {
+          //   let changes = snapshot.docChanges();
+          //   changes.forEach(change => {
+          //     if(change.type == 'added') {
+          //       state.cards.push(change.doc.data());
+          //     }
+          //   })
+          // })
+
         })
     })
 
