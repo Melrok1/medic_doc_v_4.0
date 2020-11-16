@@ -48,7 +48,7 @@
 
 <script>
 import medicalRecordsNavBar from '@/components/MedicalRecords_NavBar.vue'
-import { onMounted, reactive, computed } from 'vue'
+import { onMounted, reactive } from 'vue'
 import { useRoute } from 'vue-router'
 import { db, auth } from '@/firebase/init.js'
 import firebase from '@firebase/app';
@@ -72,11 +72,11 @@ export default {
       data: []
     })
 
-    const IdGenerator = computed(() => {
-      let date = new Date();
-      let id = Number(date).toString();
-      return id;
-    })
+    // const IdGenerator = computed(() => {
+    //   let date = new Date();
+    //   let id = Number(date).toString();
+    //   return id;
+    // })
 
     function IdGenerator2() {
       let date = new Date();
@@ -137,7 +137,7 @@ export default {
     })
 
     return {
-      IdGenerator,
+      
       addNewRecord,
       deleteSingleReport,
       constCategoryName,
