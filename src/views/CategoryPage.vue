@@ -30,7 +30,7 @@
               <p>Dátum: <span>{{ item.date }}</span> </p>
               <p>Dr. <span>{{ item.dr }}</span> </p>
               <p>{{ item.id }}</p>
-              <p class="closeBtn" @click="deleteSingleReport(item.id)"> <span>X</span></p>
+              <p class="closeBtn" @click="showDeleteSingleReportModal(item.id)"> <span>X</span></p>
             </header>
             <section>
               <img :src="item.url" :alt='item.id' height="200"> 
@@ -45,7 +45,7 @@
       <confirmDeleteModal 
         :message="state.messageToDeleteModal" 
         v-if="store2.state.showConfirmDeleteModal"
-        
+        @confirm="deleteSingleReport(state.curentId)"
       />
     </div>
 
@@ -53,6 +53,7 @@
 </template>
 
 
+<!-- ////////////////////////////////////////////////////////////////////////////// -->
 
 
 <script>
@@ -62,7 +63,7 @@ import { onMounted, reactive } from 'vue'
 import { useRoute } from 'vue-router'
 import { db, auth } from '@/firebase/init.js'
 import { useStore } from 'vuex'
-// import firebase from '@firebase/app';
+import firebase from '@firebase/app';
 
 export default {
   name: 'CategoryPage',
@@ -77,7 +78,9 @@ export default {
     const store2 = useStore();
 
 
+// ***************STATE **********************
     const state = reactive({
+      curentId: '',
       drName: '',
       date: '',
       url: '',
@@ -85,12 +88,8 @@ export default {
       data: [],
       messageToDeleteModal: 'Vymazať správu ?'
     })
+// ***************STATE **********************
 
-    // const IdGenerator = computed(() => {
-    //   let date = new Date();
-    //   let id = Number(date).toString();
-    //   return id;
-    // })
 
     function IdGenerator2() {
       let date = new Date();
@@ -109,15 +108,19 @@ export default {
         }}
       }, { merge: true });
       state.showRecords = true;
-      // console.log(IdGenerator2());
+    }
+
+    function showDeleteSingleReportModal(id) {
+      state.curentId = id;
+      store2.dispatch('showConfirmDeleteModal', true);
     }
 
     function deleteSingleReport(id) {
-      console.log(id);
-      store2.dispatch('showConfirmDeleteModal', true);
-      // db.collection(`users/${auth.currentUser.uid}/Medical_Records`).doc(`${constCategoryName}`).set({
-      //   records: { [id]: firebase.firestore.FieldValue.delete() }
-      // },{merge: true});
+      db.collection(`users/${auth.currentUser.uid}/Medical_Records`).doc(`${constCategoryName}`).set({
+        records: { [id]: firebase.firestore.FieldValue.delete() }
+      },{merge: true});
+
+      state.curentId = '';
     }
 
     onMounted(() => {
@@ -126,7 +129,6 @@ export default {
         .onSnapshot((doc) => {
           let readDataFromDb = doc.data();
           let unsorted = readDataFromDb.records;
-          // let sorted = {};
           let sorted2 = [];
 
           Object.values(unsorted)
@@ -139,21 +141,14 @@ export default {
                   sorted2.push(data);
                 });
 
-          // Object.keys(unsorted)
-          //   .sort((a,b) => b - a)
-          //   .forEach((key) => {
-          //     sorted[key] = unsorted[key];
-          //   });
-
           state.data = sorted2;
-          // console.log(unsorted);
-          // console.log(sorted2);
         })
     })
 
     return {
       store2,
       addNewRecord,
+      showDeleteSingleReportModal,
       deleteSingleReport,
       constCategoryName,
       state
@@ -162,6 +157,8 @@ export default {
 }
 </script>
 
+
+<!-- ////////////////////////////////////////////////////////////////////////////// -->
 
 
 <style lang="scss" scoped>

@@ -25,7 +25,7 @@ import { useStore } from 'vuex'
 export default {
   name: 'Confirm',
   props: ['message'],
-  setup() {
+  setup(props, {emit}) {
 
     const store2 = useStore();
 
@@ -36,8 +36,7 @@ export default {
     }
 
     function confirmDelete() {
-      console.log("zmazanie potvrdené");
-      store2.dispatch('confirmDelete', true);
+      emit('confirm', true);
       closeConfirmForm();
     }
 
