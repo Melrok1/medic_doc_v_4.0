@@ -47,7 +47,7 @@
         </form>
       </section>
 
-      <p>{{ state.cards }}</p>
+      <!-- <p>{{ state.cards }}</p> -->
 
     </main>
 

@@ -40,6 +40,15 @@
       </div>
 
     </main>
+
+    <div class="modal">
+      <confirmDeleteModal 
+        :message="state.messageToDeleteModal" 
+        v-if="store2.state.showConfirmDeleteModal"
+        
+      />
+    </div>
+
   </div>
 </template>
 
@@ -48,20 +57,24 @@
 
 <script>
 import medicalRecordsNavBar from '@/components/MedicalRecords_NavBar.vue'
+import confirmDeleteModal from '@/components/ConfirmDeleteModal.vue'
 import { onMounted, reactive } from 'vue'
 import { useRoute } from 'vue-router'
 import { db, auth } from '@/firebase/init.js'
-import firebase from '@firebase/app';
+import { useStore } from 'vuex'
+// import firebase from '@firebase/app';
 
 export default {
   name: 'CategoryPage',
   components: {
-    medicalRecordsNavBar
+    medicalRecordsNavBar, confirmDeleteModal
   },
   setup() {
 
     const { params: { categoryName }} = useRoute();
     const constCategoryName =  categoryName;
+
+    const store2 = useStore();
 
 
     const state = reactive({
@@ -69,7 +82,8 @@ export default {
       date: '',
       url: '',
       showRecords: true,
-      data: []
+      data: [],
+      messageToDeleteModal: 'Vymazať správu ?'
     })
 
     // const IdGenerator = computed(() => {
@@ -100,9 +114,10 @@ export default {
 
     function deleteSingleReport(id) {
       console.log(id);
-      db.collection(`users/${auth.currentUser.uid}/Medical_Records`).doc(`${constCategoryName}`).set({
-        records: { [id]: firebase.firestore.FieldValue.delete() }
-      },{merge: true});
+      store2.dispatch('showConfirmDeleteModal', true);
+      // db.collection(`users/${auth.currentUser.uid}/Medical_Records`).doc(`${constCategoryName}`).set({
+      //   records: { [id]: firebase.firestore.FieldValue.delete() }
+      // },{merge: true});
     }
 
     onMounted(() => {
@@ -137,7 +152,7 @@ export default {
     })
 
     return {
-      
+      store2,
       addNewRecord,
       deleteSingleReport,
       constCategoryName,

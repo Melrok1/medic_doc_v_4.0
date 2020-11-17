@@ -5,6 +5,8 @@ export default createStore({
     userFromStore: {},
     showUserProfile: false,
     showAddNewFileForm: false,
+    showConfirmDeleteModal: false,
+    confirmDelete: false
   },
   mutations: {  
     SET_USER(state, user) {
@@ -15,6 +17,12 @@ export default createStore({
     },
     SHOW_ADD_NEW_FILE_FORM(state, show) {
       state.showAddNewFileForm = show
+    },
+    SHOW_CONFIRM_DELETE_MODAL(state, show) {
+      state.showConfirmDeleteModal = show
+    },
+    CONFIRM_DELETE(state, confirm) {
+      state.confirmDelete = confirm
     }
   },
   actions: {  
@@ -26,6 +34,12 @@ export default createStore({
     },
     showAddNewFileForm({commit}, show) {
       commit('SHOW_ADD_NEW_FILE_FORM', show)
+    },
+    showConfirmDeleteModal({commit}, show) {
+      commit('SHOW_CONFIRM_DELETE_MODAL', show)
+    },
+    confirmDelete({commit}, confirm) {
+      commit('CONFIRM_DELETE', confirm)
     }
   },
   modules: {
