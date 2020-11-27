@@ -6,6 +6,7 @@
     </header>
 
     <main>
+      
       <!-- Add folder btn -->
       <section class="foldersWrap">
         <div class="folder" @click="addNewCategory">
@@ -52,6 +53,11 @@
     </main>
 
     <medicalRecordsAddCategoryForm v-if="store2.state.showAddNewFileForm" />
+
+    <p>?????</p>
+    <font-awesome-icon :icon="['fas', 'phone']" />
+    <font-awesome-icon :icon="['fas', 'at']" /> 
+    <p>??????</p>
   </div>
 </template>
 
