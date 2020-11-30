@@ -1,18 +1,47 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <h1>Home</h1>
+    <p>{{ scrollPosition }}</p>
   </div>
 </template>
 
+
+
+
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
 
 export default {
   name: 'Home',
-  components: {
-    HelloWorld
+  data() {
+    return {
+      scrollPosition: null
+    }
+  },
+  methods: {
+    updateScroll() {
+      this.scrollPosition = window.scrollY
+    }
+  },
+  mounted() {
+    window.addEventListener('scroll', this.updateScroll);
   }
 }
 </script>
+
+
+
+
+
+<style lang="scss" scoped>
+
+.home {
+  height: 200vh;
+
+  p {
+    position: fixed;
+    top: 50px;
+    left: 0;
+  }
+}
+
+</style>
