@@ -1,23 +1,29 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> 
-      <router-link to="/about">About</router-link> 
-      <router-link to="/404">404</router-link>
-    </div>
+    <mainNavBar />
     <router-view/>
   </div>
 </template>
 
-<style lang="scss">
-  #nav {
-    background: rgb(133, 133, 133);
-    @include displayFlex(row, center, center);
 
-    a {
-      text-decoration: none;
-      color: black;
-      margin-right: 1rem;
-    }
+<script>
+import mainNavBar from '@/components/MainNavBar.vue'
+
+export default {
+  name: 'App',
+
+  // COMPONENTS
+  components: {
+    mainNavBar
   }
+}
+</script>
+
+
+<style lang="scss">
+
+#app {
+  padding: 25px 0 0 0;
+}
+
 </style>

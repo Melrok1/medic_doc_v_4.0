@@ -1,7 +1,7 @@
 <template>
   <div class="page404">
-    <h3>Stránka nenájdena</h3>
     <h2>4<span class="zero"></span>4</h2>
+    <h3>Stránka nenájdena</h3>
   </div>
 </template>
 
@@ -64,9 +64,9 @@
 
   h3 {
     position: absolute;
-    top: 50%;
+    bottom: 10%;
     left: 50%;
-    transform: translate(-50%, -300%);
+    transform: translate(-50%, 0%);
     text-align: center;
     color: #f3f3f3;
     font-size: 3.5rem;
