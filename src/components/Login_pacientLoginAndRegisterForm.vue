@@ -1,9 +1,11 @@
 <template>
   <div class="loginAndRegisterForm">
+    <!-- v-if="active_form && !storeUser.email" -->
 
     <!-- Pecient Login -->
     <form class="loginForm baseForm" 
-      v-if="active_form && !storeUser.email"
+      v-if="active_form"
+      
       @submit.prevent="loginUser"
     >
 
@@ -11,8 +13,8 @@
       <input type="email" name="inputEmail" v-model="login_register_email" placeholder="E-mail" required>
       <input type="password" name="inputPassword" v-model="login_register_password" placeholder="Password" required>
       <p class="err_msg">{{ err_msg }}</p>
-      <button type="submit">Prihlásiť</button>
-      <p>Ak nemáte účet môžete si ho <span @click="active_form = false">vytvoriť</span> </p>
+      <button type="submit" class="btnDefault">Prihlásiť</button>
+      <p class="sw_msg">Ak nemáte účet môžete si ho <span @click="active_form = false">vytvoriť</span> </p>
 
     </form>
 
@@ -35,24 +37,24 @@
         required
       >
       <p class="err_msg">{{ err_msg }}</p>
-      <button type="submit">Registrovať</button>
-      <p>Späť na <span @click="active_form = true">prihlásenie</span></p>
+      <button type="submit" class="btnDefault">Registrovať</button>
+      <p class="sw_msg">Späť na <span @click="active_form = true">prihlásenie</span></p>
 
     </form>
 
     <!-- Pacient after login -->
-    <form class="baseForm" 
+    <!-- <form class="baseForm" 
       @submit.prevent 
       v-if="storeUser.displayName"
     >
 
       <p> Je prihlásený účet <strong> {{ storeUser.email }} </strong> </p>
       <div class="btnWrap">
-        <button @click="enter">Vstúpiť</button>
-        <button @click="logout">Odhlásiť</button>
+        <button @click="enter" class="btnDefault">Vstúpiť</button>
+        <button @click="logout" class="btnDefault">Odhlásiť</button>
       </div>
 
-    </form>
+    </form> -->
 
   </div>
 </template>
@@ -66,22 +68,47 @@ import { auth } from '@/firebase/init.js'
 
 export default {
   name: 'LoginAndRegisterForm',
+
+  // DATA
   data() {
     return {
       err_msg: '',
       active_form: true,
       login_register_name: null,
       login_register_email: null,
-      login_register_password: null,
-      login_register_rePassword: null,
+      login_register_password: '',
+      login_register_rePassword: '',
+      login_register_ConfirmPassword: false
     }
   },
+
+  // COMPUTED
+  computed: {
+    confirmPassword() {
+      if(this.login_register_password == this.login_register_rePassword) {
+        this.confirmPasswordStatus(true);
+        return 'green';
+      }else {
+        this.confirmPasswordStatus(false);
+        return 'red';
+      }
+    }
+  },
+
+  // METHODS
   methods: {
+    confirmPasswordStatus(x) {
+      if(this.login_register_password.length > 0 && this.login_register_rePassword.length > 0) {
+        this.login_register_ConfirmPassword = x;
+      } else {
+        this.login_register_ConfirmPassword = false;
+      }
+    },
 
     loginUser() {
       auth.signInWithEmailAndPassword(this.login_register_email, this.login_register_password).then (
-        console.log('user is logged in')
-        // () => {router.push('MedicalRecords')}
+        // console.log('user is logged in'),
+        () => {this.$router.push('MedicalRecords')}
       ).catch(err => {
         if (err.code == "auth/user-not-found") {
           this.err_msg = "pacient nenájdený / zaregistrujte sa prosím"
@@ -93,7 +120,43 @@ export default {
       })
     },
 
+    registerUser() {
+      if(this.login_register_ConfirmPassword) {
+        auth.createUserWithEmailAndPassword(this.login_register_email, this.login_register_password).then(
+          async () => {
+            const user = auth.currentUser;
+            if(user) {
+              await user.updateProfile({
+                displayName: this.login_register_name
+              });
+              // await db.collection('users').doc(user.uid).collection('Medical_Records').doc();
+              // await db.collection('users').doc(user.uid).collection('Personal_Records').add({});
+              this.$router.push('MedicalRecords');
+            }else {
+              console.log('displayName upradte err');
+            }
+          },
+          // console.log('add new user'),
+        )
+      }else {
+        this.err_msg = 'Zadané hesla sa nezhodujú !';
+      }
+    },
 
+    logout() {
+      console.log('user is logged out');
+      auth.signOut().then(console.log('rly loged out ?')
+      ).then(
+        () => {
+          // store2.dispatch('setUser', {})
+          this.$router.replace('/')
+        },
+      )
+    },
+
+    enter() {
+      this.$router.push('MedicalRecords');
+    }
   }
 }
 </script>
