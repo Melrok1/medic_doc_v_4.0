@@ -2,8 +2,9 @@
   <div class="mainNavBar">
     <nav :class="{stickyBar: scrollPosition > 0}">
       <router-link to="/">Login</router-link> 
-      <router-link to="/about">About</router-link> 
+      <router-link to="/medicalRecords">MedicalRecords</router-link> 
       <router-link to="/404">404</router-link>
+      <a @click="logout()"> logout </a>
     </nav>
   </div>
 </template>
@@ -11,6 +12,8 @@
 
 
 <script>
+import { auth } from '@/firebase/init.js'
+
 export default {
   name: 'MainNavBar',
 
@@ -25,6 +28,16 @@ export default {
   methods: {
     updateScroll() {
       this.scrollPosition = window.scrollY
+    },
+    logout() {
+      console.log('user is logged out');
+      auth.signOut().then(console.log('rly loged out ?')
+      ).then(
+        () => {
+          // store2.dispatch('setUser', {})
+          this.$router.replace('/')
+        },
+      )
     }
   },
 
